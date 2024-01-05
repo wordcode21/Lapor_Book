@@ -6,6 +6,7 @@ import 'package:lapor_book_app/page/RegisterPage.dart';
 import 'package:lapor_book_app/page/LoginPage.dart';
 import 'package:lapor_book_app/page/dashborard/DashboardPage.dart';
 import 'package:lapor_book_app/page/AddFormPage.dart';
+import 'package:lapor_book_app/page/DetailPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,6 @@ void main() async {
     '/register': (context) => const RegisterPage(),
     '/dashboard': (context) => const DashboardPage(),
     '/add': (context) => AddFormPage(),
-    // '/detail': (context) => DetailPage(),
+    '/detail': (context) => DetailPage(),
   }));
 }
