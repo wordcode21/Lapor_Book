@@ -5,6 +5,9 @@ import 'package:lapor_book_app/models/akun.dart';
 import 'package:lapor_book_app/models/laporan.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:lapor_book_app/components/like_button.dart';
+import 'package:lapor_book_app/components/like_counter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DetailPage extends StatefulWidget {
   DetailPage({super.key});
@@ -14,6 +17,9 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   bool _isLoading = false;
+  int likes = 0;
+
+  final _firestore = FirebaseFirestore.instance;
 
   String? status;
 
@@ -35,6 +41,23 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
+  void countLike(String laporanId) async {
+    debugPrint("count like");
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection("likes")
+          .where('laporanId', isEqualTo: laporanId)
+          .get();
+
+      setState(() {
+        likes = querySnapshot.docs.length;
+      });
+    } catch (e) {
+      debugPrint("$e");
+      rethrow;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final arguments =
@@ -42,6 +65,7 @@ class _DetailPageState extends State<DetailPage> {
 
     Laporan laporan = arguments['laporan'];
     Akun akun = arguments['akun'];
+    countLike(laporan.docId);
 
     return Scaffold(
       appBar: AppBar(
@@ -87,6 +111,8 @@ class _DetailPageState extends State<DetailPage> {
                               laporan.instansi, Colors.white, Colors.black),
                         ],
                       ),
+                      LikeCounter(qty: likes),
+                      LikeButton(laporan: laporan),
                       const SizedBox(height: 20),
                       ListTile(
                         leading: Icon(Icons.person),

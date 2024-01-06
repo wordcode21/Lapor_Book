@@ -23,6 +23,7 @@ class ListItem extends StatefulWidget {
 class _ListItemState extends State<ListItem> {
   final _firestore = FirebaseFirestore.instance;
   final _storage = FirebaseStorage.instance;
+  int likes = 0;
 
   void deleteLaporan() async {
     try {
@@ -38,9 +39,26 @@ class _ListItemState extends State<ListItem> {
     }
   }
 
+  void countLike(String laporanId) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestore
+          .collection("likes")
+          .where('laporanId', isEqualTo: laporanId)
+          .get();
+
+      setState(() {
+        likes = querySnapshot.docs.length;
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // kodingan sebelumnya
   @override
   Widget build(BuildContext context) {
+    countLike(widget.laporan.docId);
+
     return Container(
       decoration: BoxDecoration(
           border: Border.all(width: 2),
@@ -131,7 +149,7 @@ class _ListItemState extends State<ListItem> {
                             vertical: BorderSide(width: 1))),
                     alignment: Alignment.center,
                     child: Text(
-                      DateFormat('dd/MM/yyyy').format(widget.laporan.tanggal),
+                      "likes $likes",
                       style: headerStyle(level: 5, dark: false),
                     ),
                   ),
